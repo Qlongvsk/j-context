@@ -20,3 +20,6 @@ def create_vocabulary(db: Session, vocab: schemas.VocabularyCreate):
 # Hàm lấy danh sách từ vựng (MỚI)
 def get_vocabularies(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Vocabulary).offset(skip).limit(limit).all()
+# Hàm lấy chi tiết 1 từ theo ID (MỚI)
+def get_vocabulary(db: Session, vocab_id: str):
+    return db.query(models.Vocabulary).filter(models.Vocabulary.id == vocab_id).first()

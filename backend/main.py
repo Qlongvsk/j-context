@@ -30,3 +30,11 @@ def create_vocabulary(vocab: schemas.VocabularyCreate, db: Session = Depends(get
 def read_vocabularies(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     vocabularies = crud.get_vocabularies(db, skip=skip, limit=limit)
     return vocabularies
+
+# --- API MỚI: Lấy chi tiết 1 từ vựng ---
+@app.get("/vocabularies/{vocab_id}", response_model=schemas.VocabularyResponse)
+def read_vocabulary(vocab_id: str, db: Session = Depends(get_db)):
+    db_vocab = crud.get_vocabulary(db, vocab_id=vocab_id)
+    if db_vocab is None:
+        raise HTTPException(status_code=404, detail="Vocabulary not found")
+    return db_vocab
