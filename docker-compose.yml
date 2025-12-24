@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # 1. Database PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: jcontext_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: jcontext_db
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  # 2. Object Storage MinIO (Thay thế S3)
+  minio:
+    image: minio/minio
+    container_name: jcontext_minio
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password123
+    ports:
+      - "9000:9000" # API Port
+      - "9001:9001" # Console UI Port
+    volumes:
+      - ./minio_data:/data

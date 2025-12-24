@@ -1,0 +1,12 @@
+node_modules/
+__pycache__/
+venv/
+.env
+.DS_Store
+.idea/
+.vscode/
+dist/
+build/
+*.pyc
+postgres_data/
+minio_data/
