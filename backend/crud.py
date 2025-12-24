@@ -6,12 +6,20 @@ def create_vocabulary(db: Session, vocab: schemas.VocabularyCreate):
         term=vocab.term,
         kana=vocab.kana,
         kanji_html=vocab.kanji_html,
-        sino_vietnamese=vocab.sino_vietnamese,
-        pitch_accent=vocab.pitch_accent,
-        audio_url=vocab.audio_url,
-        tags=vocab.tags,
         meanings_data=vocab.meanings_data,
-        status="verified"
+        
+        # Mapping các trường mới
+        pitch_accent=vocab.pitch_accent,
+        meaning_vi=vocab.meaning_vi,
+        anki_id=vocab.anki_id,
+        sino_vietnamese=vocab.sino_vietnamese,
+        audio_word=vocab.audio_word,
+        example_html=vocab.example_html,
+        audio_sentence=vocab.audio_sentence,
+        type=vocab.type,
+        tags=vocab.tags,
+        
+        status=vocab.status
     )
     db.add(db_vocab)
     db.commit()

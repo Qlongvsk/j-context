@@ -6,6 +6,7 @@ interface Vocabulary {
   id: string;
   term: string;
   kana: string;
+  kanji_html?: string; // <--- Thêm trường này
   meanings_data: any[];
 }
 
@@ -17,7 +18,6 @@ export default function PracticePage({
   const { id } = use(params); 
 
   const [vocab, setVocab] = useState<Vocabulary | null>(null);
-  // State để lưu chỉ số (index) của nghĩa đang được chọn. Mặc định là 0.
   const [selectedMeaningIndex, setSelectedMeaningIndex] = useState<number>(0);
 
   useEffect(() => {
@@ -30,7 +30,6 @@ export default function PracticePage({
   const handleCopyPrompt = () => {
     if (!vocab) return;
 
-    // Lấy đúng cái nghĩa mà người dùng đang chọn
     const selectedMeaning = vocab.meanings_data[selectedMeaningIndex];
 
     const promptText = `
@@ -56,13 +55,26 @@ Nhiệm vụ của bạn:
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6 flex flex-col items-center">
       
-      {/* 1. KHUNG TỪ VỰNG CHÍNH */}
+      {/* 1. KHUNG TỪ VỰNG CHÍNH (ĐÃ UPDATE FURIGANA) */}
       <div className="text-center mb-8">
-        <h1 className="text-6xl font-black text-green-400 mb-2">{vocab.term}</h1>
-        <p className="text-2xl text-gray-400 font-mono">{vocab.kana}</p>
+        {vocab.kanji_html ? (
+            // Hiển thị HTML Furigana nếu có
+            <h1 
+              className="text-6xl font-black text-green-400 mb-2 ruby-large"
+              dangerouslySetInnerHTML={{ __html: vocab.kanji_html }}
+            />
+        ) : (
+            // Hiển thị bình thường nếu không có HTML
+            <h1 className="text-6xl font-black text-green-400 mb-2">{vocab.term}</h1>
+        )}
+        
+        {/* Chỉ hiện Kana phụ nếu không có Furigana (tránh lặp lại) */}
+        {!vocab.kanji_html && (
+            <p className="text-2xl text-gray-400 font-mono">{vocab.kana}</p>
+        )}
       </div>
 
-      {/* 2. KHUNG CHỌN NGỮ CẢNH (STEP QUAN TRỌNG TRONG SRS) */}
+      {/* 2. KHUNG CHỌN NGỮ CẢNH */}
       <div className="w-full max-w-2xl mb-8">
         <h3 className="text-gray-400 text-sm uppercase font-bold mb-3 tracking-wider text-center">
           Bước 1: Chọn ngữ cảnh bạn muốn học
@@ -88,7 +100,6 @@ Nhiệm vụ của bạn:
                 <span className="text-lg font-semibold text-gray-100">{m.definition}</span>
               </div>
               
-              {/* Checkbox ảo */}
               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                 selectedMeaningIndex === idx ? "border-blue-400 bg-blue-500" : "border-gray-500"
               }`}>
@@ -99,14 +110,14 @@ Nhiệm vụ của bạn:
         </div>
       </div>
 
-      {/* 3. GENERATE PROMPT (STEP 2 TRONG SRS) */}
+      {/* 3. GENERATE PROMPT */}
       <div className="w-full max-w-2xl">
          <h3 className="text-gray-400 text-sm uppercase font-bold mb-3 tracking-wider text-center">
           Bước 2: Tạo học liệu với AI
         </h3>
         <button 
           onClick={handleCopyPrompt}
-          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 px-6 rounded-xl transition shadow-lg border-b-4 border-green-800 active:border-b-0 active:translate-y-1 flex items-center justify-center gap-2 group"
+          className="w-full bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 px-6 rounded-xl transition shadow-lg border-b-4 border-green-800 active:border-b-0 active:translate-y-1 flex items-center justify-center gap-2 group"
         >
           <span className="text-xl group-hover:rotate-12 transition">🤖</span>
           <span>Generate Context Prompt (Copy)</span>
